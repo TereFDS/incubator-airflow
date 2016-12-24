@@ -48,8 +48,9 @@ class PrestoHook(DbApiHook):
             port=db.port,
             username=db.login,
             catalog=db.extra_dejson.get('catalog', 'hive'),
-            schema=db.schema)
-
+            schema=db.schema,
+            session_props=db.extra_dejson.get('session_properties', {})
+            )
     @staticmethod
     def _strip_sql(sql):
         return sql.strip().rstrip(';')
