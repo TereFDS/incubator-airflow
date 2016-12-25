@@ -1004,6 +1004,7 @@ class CliTests(unittest.TestCase):
         self.assertIn(['emr_default', 'emr'], conns)
         self.assertIn(['mssql_default', 'mssql'], conns)
         self.assertIn(['mysql_default', 'mysql'], conns)
+        self.assertIn(['presto_default', 'presto'], conns)
         self.assertIn(['postgres_default', 'postgres'], conns)
 
         # Attempt to list connections with invalid cli args
@@ -1845,6 +1846,29 @@ class WebHDFSHookTest(unittest.TestCase):
         from airflow.hooks.webhdfs_hook import WebHDFSHook
         c = WebHDFSHook(proxy_user='someone')
         assert c.proxy_user == 'someone'
+
+
+class PrestoHookTest(unittest.TestCase):
+    def setUp(self):
+        configuration.load_test_config()
+
+    @mock.patch('pyhive.presto.connect')
+    def test_simple_init(self):
+        from airflow.hooks.presto_hook import PrestoHook
+        c = PrestoHook()
+        mock_connect.assert_called_with(host='presto_default',
+            port=8889,
+            username='',
+            catalog='',
+            schema='',
+            session_props={}
+        )
+
+    def test_init_proxy_user(self):
+        from airflow.hooks.presto_hook import PrestoHook
+        c = PrestoHook()
+        #c.get_conn()
+        assert c is not None
 
 
 try:
